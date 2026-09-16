@@ -1,0 +1,286 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>ConnectHub</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet"
+          href="{% static 'social/style.css' %}">
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        🌐 <span>ConnectHub</span>
+    </div>
+
+    <nav class="nav-links">
+
+        <a href="/">
+            🏠 Home
+        </a>
+
+        {% if user.is_authenticated %}
+
+            <a href="/profile/{{ user.username }}/">
+                👤 {{ user.username }}
+            </a>
+
+            <a href="/logout/">
+                🚪 Logout
+            </a>
+
+        {% else %}
+
+            <a href="/login/">
+                🔐 Login
+            </a>
+
+            <a href="/register/">
+                📝 Register
+            </a>
+
+        {% endif %}
+
+    </nav>
+
+</header>
+
+
+<main class="container">
+
+    <!-- Welcome Section -->
+
+    <section class="welcome">
+
+        {% if user.is_authenticated %}
+
+            <h2>
+                Welcome back, {{ user.username }} 👋
+            </h2>
+
+            <p>
+                Share your thoughts and connect with your community.
+            </p>
+
+        {% else %}
+
+            <h2>
+                Welcome to ConnectHub 🌐
+            </h2>
+
+            <p>
+                Connect with people and share your thoughts.
+            </p>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- Create Post -->
+
+    {% if user.is_authenticated %}
+
+    <section class="post-box">
+
+        <h3>✨ Create a Post</h3>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <textarea
+                name="content"
+                rows="4"
+                placeholder="What's on your mind, {{ user.username }}?"
+                required></textarea>
+
+            <button type="submit">
+                🚀 Publish Post
+            </button>
+
+        </form>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- Posts -->
+
+    <section class="feed">
+
+        <div class="feed-title">
+
+            <h2>Latest Posts</h2>
+
+            <span>Community Feed</span>
+
+        </div>
+
+
+        {% for post in posts %}
+
+        <article class="post-card">
+
+            <!-- Post Header -->
+
+            <div class="post-header">
+
+                <a class="post-user"
+                   href="/profile/{{ post.user.username }}/">
+
+                    <div class="avatar">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            {{ post.user.username }}
+                        </strong>
+
+                        <small>
+                            {{ post.created_at }}
+                        </small>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <!-- Post Content -->
+
+            <div class="post-content">
+
+                <p>
+                    {{ post.content }}
+                </p>
+
+            </div>
+
+
+            <!-- Actions -->
+
+            <div class="actions">
+
+                {% if user.is_authenticated %}
+
+                    <a class="action-button"
+                       href="/post/{{ post.id }}/like/">
+
+                        ❤️ Like
+                        <span>{{ post.like_set.count }}</span>
+
+                    </a>
+
+                {% else %}
+
+                    <span class="action-button">
+
+                        ❤️ Like
+                        <span>{{ post.like_set.count }}</span>
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Comments -->
+
+            <div class="comments-section">
+
+                <h4>
+                    💬 Comments
+                </h4>
+
+
+                {% for comment in post.comment_set.all %}
+
+                    <div class="comment">
+
+                        <strong>
+                            {{ comment.user.username }}
+                        </strong>
+
+                        <span>
+                            {{ comment.content }}
+                        </span>
+
+                    </div>
+
+                {% empty %}
+
+                    <p class="no-comments">
+                        No comments yet.
+                    </p>
+
+                {% endfor %}
+
+
+                {% if user.is_authenticated %}
+
+                <form
+                    class="comment-form"
+                    method="POST"
+                    action="/post/{{ post.id }}/comment/">
+
+                    {% csrf_token %}
+
+                    <input
+                        type="text"
+                        name="content"
+                        placeholder="Write a comment..."
+                        required>
+
+                    <button type="submit">
+                        💬 Comment
+                    </button>
+
+                </form>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+
+        {% empty %}
+
+        <article class="post-card empty-post">
+
+            <div>
+                🌱
+            </div>
+
+            <h3>No posts yet</h3>
+
+            <p>
+                Be the first person to share something with the community!
+            </p>
+
+        </article>
+
+        {% endfor %}
+
+    </section>
+
+</main>
+
+</body>
+
+</html>

@@ -1,0 +1,203 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>{{ profile_user.username }} - ConnectHub</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet"
+          href="{% static 'social/style.css' %}">
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        🌐 <span>ConnectHub</span>
+    </div>
+
+    <nav class="nav-links">
+
+        <a href="/">
+            🏠 Home
+        </a>
+
+        <a href="/profile/{{ request.user.username }}/">
+            👤 {{ request.user.username }}
+        </a>
+
+        <a href="/logout/">
+            🚪 Logout
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main class="container">
+
+    <!-- Profile -->
+
+    <section class="profile-card">
+
+        <div class="profile-icon">
+            👤
+        </div>
+
+        <h2>
+            {{ profile_user.username }}
+        </h2>
+
+        <p class="profile-subtitle">
+            ConnectHub member
+        </p>
+
+
+        <div class="profile-stats">
+
+            <div>
+                <strong>{{ posts.count }}</strong>
+                <span>Posts</span>
+            </div>
+
+            <div>
+                <strong>{{ followers_count }}</strong>
+                <span>Followers</span>
+            </div>
+
+            <div>
+                <strong>{{ following_count }}</strong>
+                <span>Following</span>
+            </div>
+
+        </div>
+
+
+        {% if request.user != profile_user %}
+
+            {% if is_following %}
+
+                <a class="button"
+                   href="/unfollow/{{ profile_user.username }}/">
+
+                    ✓ Following
+
+                </a>
+
+            {% else %}
+
+                <a class="button"
+                   href="/follow/{{ profile_user.username }}/">
+
+                    + Follow
+
+                </a>
+
+            {% endif %}
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- User Posts -->
+
+    <section class="feed">
+
+        <div class="feed-title">
+
+            <h2>
+                {{ profile_user.username }}'s Posts
+            </h2>
+
+            <span>
+                Community Activity
+            </span>
+
+        </div>
+
+
+        {% for post in posts %}
+
+            <article class="post-card">
+
+                <div class="post-header">
+
+                    <div class="post-user">
+
+                        <div class="avatar">
+                            👤
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                {{ post.user.username }}
+                            </strong>
+
+                            <small>
+                                {{ post.created_at }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="post-content">
+
+                    <p>
+                        {{ post.content }}
+                    </p>
+
+                </div>
+
+
+                <div class="actions">
+
+                    <span class="action-button">
+
+                        ❤️ {{ post.like_set.count }}
+
+                    </span>
+
+                </div>
+
+            </article>
+
+        {% empty %}
+
+            <article class="post-card empty-post">
+
+                <div>
+                    🌱
+                </div>
+
+                <h3>
+                    No posts yet
+                </h3>
+
+                <p>
+                    {{ profile_user.username }} hasn't shared anything yet.
+                </p>
+
+            </article>
+
+        {% endfor %}
+
+    </section>
+
+</main>
+
+</body>
+
+</html>

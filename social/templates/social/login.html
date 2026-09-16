@@ -1,0 +1,56 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - ConnectHub</title>
+    <link rel="stylesheet" href="{% static 'social/style.css' %}">
+</head>
+
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <h1>🌐 ConnectHub</h1>
+
+        <h2>Welcome Back</h2>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                required
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                required
+            >
+
+            <button type="submit" class="button">
+                Login
+            </button>
+        </form>
+
+        <p>
+            Don't have an account?
+            <a href="/register/">Register</a>
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>
